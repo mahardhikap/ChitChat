@@ -57,10 +57,6 @@ export function Dashboard() {
             },
           }
         );
-  
-        // Wait for the post request to complete before calling getMessages
-        await getMessages();
-  
         setInputMessage({ message: '' });
       } else {
         alert('Message harus diisi!');
@@ -190,13 +186,14 @@ export function Dashboard() {
                   } mb-2`}
                 >
                   {item?.message}
-                  <div className='text-right text-xs truncate font-thin'>
+                  {/* //fix this later */}
+                  {/* <div className='text-right text-xs truncate font-thin'>
                     {new Date(item?.created_at).toLocaleString('id-ID', {
                       timeZone: 'Asia/Jakarta',
                       hour: 'numeric',
                       minute: 'numeric',
                     })}
-                  </div>
+                  </div> */}
                 </div>
               ))}
             </div>
