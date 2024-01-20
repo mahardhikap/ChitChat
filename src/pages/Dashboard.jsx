@@ -17,8 +17,8 @@ export function Dashboard() {
   const [inputMessage, setInputMessage] = useState({
     message: '',
   });
-  const listRooms = () => {
-    axios
+  const listRooms = async () => {
+    await axios
       .get(`${url}/rooms`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })
@@ -30,8 +30,8 @@ export function Dashboard() {
       });
   };
 
-  const getMessages = () => {
-    axios
+  const getMessages = async () => {
+    await axios
       .get(`${url}/messages/${roomid}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })
@@ -48,7 +48,7 @@ export function Dashboard() {
   const sendMessage = async () => {
     try {
       if (inputMessage.message !== '') {
-        axios.post(
+        await axios.post(
           `${url}/send/${sentBack}`,
           inputMessage,
           {
@@ -57,6 +57,10 @@ export function Dashboard() {
             },
           }
         );
+  
+        // Wait for the post request to complete before calling getMessages
+        await getMessages();
+  
         setInputMessage({ message: '' });
       } else {
         alert('Message harus diisi!');
