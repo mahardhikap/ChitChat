@@ -13,6 +13,7 @@ export function SearchUser() {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         }})
         setInputSearch('')
+        window.location.reload()
     }).catch((err) => {
         console.log(err)
     });
