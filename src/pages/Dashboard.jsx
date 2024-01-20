@@ -48,7 +48,7 @@ export function Dashboard() {
   const sendMessage = async () => {
     try {
       if (inputMessage.message !== '') {
-        const result = await axios.post(
+        axios.post(
           `${url}/send/${sentBack}`,
           inputMessage,
           {
@@ -57,8 +57,6 @@ export function Dashboard() {
             },
           }
         );
-        console.log(result);
-        socket.emit('chat message', inputMessage.message);
         setInputMessage({ message: '' });
       } else {
         alert('Message harus diisi!');
