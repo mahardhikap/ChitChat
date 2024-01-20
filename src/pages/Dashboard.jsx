@@ -58,8 +58,8 @@ export function Dashboard() {
           }
         );
         console.log(result);
+        socket.emit('chat message', inputMessage.message);
         setInputMessage({ message: '' });
-        socket.emit('chat message', inputMessage);
       } else {
         alert('Message harus diisi!');
       }
