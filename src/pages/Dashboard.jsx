@@ -37,7 +37,7 @@ export function Dashboard() {
       })
       .then((result) => {
         setMessages(result.data.data);
-        console.log(result.data.data);
+        // console.log(result.data.data);
         setSentBack(result.data.send_to);
       })
       .catch((err) => {

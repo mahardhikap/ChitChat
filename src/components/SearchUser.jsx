@@ -4,19 +4,39 @@ let url = import.meta.env.VITE_BASE_URL;
 export function SearchUser() {
   const [inputSearch, setInputSearch] = useState('');
   const firstMessage = {
-    message:'Hi!'
-  }
-  const handleSearchUsername = () => {
-    axios.get(`${url}/username/${inputSearch}`).then((result) => {
-        console.log(result.data.data.username)
-        axios.post(`${url}/send/${result.data.data.id}`, firstMessage, {headers:{
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }})
-        setInputSearch('')
-        window.location.reload()
-    }).catch((err) => {
-        console.log(err)
-    });
+    message: 'Hi!',
+  };
+
+  const handleSearchUsername = async () => {
+    try {
+      if (localStorage.getItem('username') !== inputSearch) {
+        const response = await axios.get(`${url}/username/${inputSearch}`);
+        console.log(response.data.data.username);
+
+        await axios.post(`${url}/send/${response.data.data.id}`, firstMessage, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        // Reload halaman jika pemrosesan berhasil
+        if (response) {
+          alert(
+            'Say hi ke teman berhasil! mungkin perlu reload untuk menampilkan.'
+          );
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+        }
+      } else {
+        alert('Anda tidak bisa menambahkan diri anda sendiri ke message');
+      }
+    } catch (error) {
+      alert('username tidak ada!');
+      console.log(error);
+    } finally {
+      setInputSearch('');
+    }
   };
 
   return (
@@ -31,7 +51,9 @@ export function SearchUser() {
       />
       <button
         className="p-3 bg-green-300 font-bold text-white"
-        onClick={() => handleSearchUsername()}
+        onClick={() => {
+          handleSearchUsername();
+        }}
       >
         Hi
       </button>
