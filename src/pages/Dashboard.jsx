@@ -59,6 +59,7 @@ export function Dashboard() {
         );
         console.log(result);
         setInputMessage({ message: '' });
+        getMessages();
       } else {
         alert('Message harus diisi!');
       }
