@@ -8,7 +8,7 @@ export function Home() {
       <div className="w-11/12 sm:6/12 md:w-4/12 lg:4/12">
         <p className="text-2xl text-center mb-5 font-medium">
           Welcome to{' '}
-          <span className="text-green-300 font-extrabold">ChitCHat!</span>
+          <span className="text-green-300 font-extrabold">ChitChat!</span>
         </p>
         <div className="flex justify-center items-center flex-col">
           <div className="flex flex-row">

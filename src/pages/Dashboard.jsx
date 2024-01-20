@@ -122,9 +122,9 @@ export function Dashboard() {
     <section className="container mx-auto h-screen w-11/12 sm:w-8/12 flex justify-center items-center">
       <div className="flex-grow">
         <div className="my-2">
-          Login as, {localStorage.getItem('username')}{' '}
+          Login as, <span className='font-bold truncate'>{localStorage.getItem('username')}</span>{' '}
           <span
-            className="font-bold cursor-pointer text-red-500"
+            className="font-bold cursor-pointer text-red-700 hover:text-red-500"
             onClick={() => handleLogout()}
           >
             [ logout ]
