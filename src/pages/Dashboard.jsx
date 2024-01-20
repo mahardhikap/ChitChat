@@ -1,8 +1,8 @@
 import { SearchUser } from '../components/SearchUser';
-import { ListRooms } from '../components/ListRooms';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 
 let url = import.meta.env.VITE_BASE_URL;
 export function Dashboard() {
@@ -12,6 +12,8 @@ export function Dashboard() {
   const [sentBack, setSentBack] = useState(0);
   const [socket, setSocket] = useState(null);
   const [activeRoom, setActiveRoom] = useState('');
+  const messagesContainerRef = useRef(null);
+  const navigate = useNavigate();
   const [inputMessage, setInputMessage] = useState({
     message: '',
   });
@@ -22,7 +24,6 @@ export function Dashboard() {
       })
       .then((result) => {
         setRooms(result.data.data);
-        // console.log(result);
       })
       .catch((err) => {
         console.log(err);
@@ -36,28 +37,40 @@ export function Dashboard() {
       })
       .then((result) => {
         setMessages(result.data.data);
+        console.log(result.data.data);
         setSentBack(result.data.send_to);
-        // console.log(result.data.send_to);
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const sendMessage = () => {
-    axios
-      .post(`${url}/send/${sentBack}`, inputMessage, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      })
-      .then((result) => {
+  const sendMessage = async () => {
+    try {
+      if (inputMessage.message !== '') {
+        const result = await axios.post(
+          `${url}/send/${sentBack}`,
+          inputMessage,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          }
+        );
         console.log(result);
-        // setTimeout(() => {
-        //   getMessages();
-        // }, 2000);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        setInputMessage({ message: '' });
+      } else {
+        alert('Message harus diisi!');
+      }
+    } catch (error) {
+      alert('Terjadi kesalahan saat mengirim pesan!');
+      console.error('Ada error saat mengirim pesan', error);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/home');
   };
 
   useEffect(() => {
@@ -66,7 +79,6 @@ export function Dashboard() {
     }
   }, [roomid]);
 
-  
   useEffect(() => {
     const newSocket = io(url);
 
@@ -86,7 +98,7 @@ export function Dashboard() {
       setMessages((prevMessages) => [...prevMessages, msg]);
     });
 
-    setSocket(newSocket);
+    // setSocket(newSocket);
 
     return () => {
       if (newSocket) {
@@ -97,72 +109,114 @@ export function Dashboard() {
   }, []);
 
   useEffect(() => {
+    // Scroll to the bottom when messages change
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
     listRooms();
   }, []);
   return (
-    <section className="container mx-auto h-screen w-full sm:w-1/2 bg-neutral-50">
-      <SearchUser />
-      <div className="grid grid-cols-12 w-full h-[620px] sm:h-[500px]">
-        <div className="col-span-3 h-full">
-          <div className="overflow-y-auto h-[620px] sm:h-[480px]">
-            {rooms.map((item, index) => {
-              const participant1 = item?.participants?.[0];
-              const participant2 = item?.participants?.[1];
+    <section className="container mx-auto h-screen w-11/12 sm:w-8/12 flex justify-center items-center">
+      <div className="flex-grow">
+        <div className="my-2">
+          Login as, {localStorage.getItem('username')}{' '}
+          <span
+            className="font-bold cursor-pointer text-red-500"
+            onClick={() => handleLogout()}
+          >
+            [ logout ]
+          </span>{' '}
+        </div>
+        <SearchUser />
+        <div className="grid grid-cols-12 w-full bg-blue-50">
+          <div className="col-span-3 h-full">
+            <div className="overflow-y-auto h-[500px] sm:h-[400px]">
+              {rooms.map((item, index) => {
+                const participant1 = item?.participants?.[0];
+                const participant2 = item?.participants?.[1];
 
-              return (
+                return (
+                  <div
+                    className={`p-2 mx-2 border-b font-bold truncate cursor-pointer ${
+                      activeRoom === item?.room_id ? 'bg-blue-200' : ''
+                    }`}
+                    onClick={() => {
+                      setRoomid(item?.room_id);
+                      setActiveRoom(item?.room_id);
+                    }}
+                    key={index}
+                  >
+                    {participant1 === localStorage.getItem('username')
+                      ? participant2
+                      : participant1}
+                    {/* <div className='text-right text-xs truncate font-normal'>{new Date(item?.created_at).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div> */}
+                    <div className="flex justify-between">
+                      <div className="text-left text-xs truncate font-normal w-1/2">
+                        {item.last_message}
+                      </div>
+                      <div className="text-right text-xs truncate font-thin">
+                        {new Date(item?.created_at).toLocaleString('id-ID', {
+                          timeZone: 'Asia/Jakarta',
+                          hour: 'numeric',
+                          minute: 'numeric',
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="col-span-9 h-full bg-gray-100">
+            <div
+              className="overflow-y-auto h-[500px] sm:h-[400px] flex flex-col overflow-wrap-break-word"
+              ref={messagesContainerRef}
+            >
+              {messages.map((item, index) => (
                 <div
-                  className={`p-3 border-b font-bold truncate cursor-pointer ${
-                    activeRoom === item?.room_id ? 'bg-blue-200' : ''
-                  }`}
-                  onClick={() => {
-                    setRoomid(item?.room_id);
-                    setActiveRoom(item?.room_id);
-                  }}
                   key={index}
+                  className={`p-2 rounded-lg ${
+                    parseInt(localStorage.getItem('id')) ===
+                    parseInt(item?.sender_id)
+                      ? 'bg-green-100 text-right self-end break-words max-w-40 sm:max-w-96'
+                      : 'bg-blue-100 text-left self-start break-words max-w-40 sm:max-w-96'
+                  } mb-2`}
                 >
-                  {participant1 === localStorage.getItem('username')
-                    ? participant2
-                    : participant1}
+                  {item?.message}
+                  <div className='text-right text-xs truncate font-thin'>
+                    {new Date(item?.created_at).toLocaleString('id-ID', {
+                      timeZone: 'Asia/Jakarta',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                    })}
+                  </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
-        <div className="col-span-9 h-full bg-gray-100">
-          <div className="overflow-y-auto h-[620px] sm:h-[480px] flex flex-col">
-            {messages.map((item, index) => (
-              <div
-                key={index}
-                className={`p-2 rounded-lg ${
-                  parseInt(localStorage.getItem('id')) ===
-                  parseInt(item?.sender_id)
-                    ? 'bg-green-100 text-right self-end'
-                    : 'bg-blue-100 text-left self-start'
-                } mb-2`}
-              >
-                {item?.message}
-              </div>
-            ))}
-          </div>
+        <div className="flex justify-center items-center">
+          <input
+            type="text"
+            className="p-3 w-full"
+            placeholder="Input message"
+            name="message"
+            value={inputMessage.message}
+            onChange={(e) =>
+              setInputMessage({ ...inputMessage, message: e.target.value })
+            }
+          />
+          <button
+            className="p-3 bg-green-300 font-bold text-white"
+            onClick={() => sendMessage()}
+          >
+            Send
+          </button>
         </div>
-      </div>
-      <div className="flex justify-center items-center">
-        <input
-          type="text"
-          className="p-3 w-full"
-          placeholder="Input message"
-          name="message"
-          value={inputMessage.message}
-          onChange={(e) =>
-            setInputMessage({ ...inputMessage, message: e.target.value })
-          }
-        />
-        <button
-          className="p-3 bg-green-300 font-bold text-white"
-          onClick={() => sendMessage()}
-        >
-          Send
-        </button>
       </div>
     </section>
   );
