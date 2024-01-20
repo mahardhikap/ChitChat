@@ -59,7 +59,7 @@ export function Dashboard() {
         );
         console.log(result);
         setInputMessage({ message: '' });
-        getMessages();
+        socket.emit('chat message', inputMessage);
       } else {
         alert('Message harus diisi!');
       }
