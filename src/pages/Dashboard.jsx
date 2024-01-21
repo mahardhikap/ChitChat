@@ -130,7 +130,8 @@ export function Dashboard() {
   return (
     <section className="container mx-auto h-screen w-11/12 sm:w-8/12 flex justify-center items-center">
       <div className="flex-grow">
-        <div className="my-2">
+        <div className="grid grid-cols-12 w-full bg-gray-50 shadow-md">
+        <div className="my-2 col-span-12 p-2">
           Login as,{' '}
           <span className="font-bold truncate">
             {localStorage.getItem('username')}
@@ -142,7 +143,6 @@ export function Dashboard() {
             [ logout ]
           </span>{' '}
         </div>
-        <div className="grid grid-cols-12 w-full bg-gray-50 shadow-md">
           <div className="col-span-4 h-full">
             <SearchUser />
             <div className="overflow-y-auto h-[545px] sm:h-[445px]">
