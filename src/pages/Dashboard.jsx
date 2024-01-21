@@ -142,48 +142,55 @@ export function Dashboard() {
             [ logout ]
           </span>{' '}
         </div>
-        <SearchUser />
-        <div className="grid grid-cols-12 w-full bg-gray-50">
+        <div className="grid grid-cols-12 w-full bg-gray-50 shadow-md">
           <div className="col-span-4 h-full">
-            <div className="overflow-y-auto h-[500px] sm:h-[400px]">
-              {rooms.length !== 0 ? rooms.map((item, index) => {
-                const participant1 = item?.participants?.[0];
-                const participant2 = item?.participants?.[1];
+            <SearchUser />
+            <div className="overflow-y-auto h-[545px] sm:h-[445px]">
+              {rooms.length !== 0 ? (
+                rooms.map((item, index) => {
+                  const participant1 = item?.participants?.[0];
+                  const participant2 = item?.participants?.[1];
 
-                return (
-                  <div
-                    className={`p-2 mx-2 border-b font-bold truncate cursor-pointer ${
-                      activeRoom === item?.room_id ? 'bg-blue-300' : ''
-                    }`}
-                    onClick={() => {
-                      handleJoinRoom(item?.room_id);
-                      setActiveHidden(false);
-                    }}
-                    key={index}
-                  >
-                    {participant1 === localStorage.getItem('username')
-                      ? participant2
-                      : participant1}
-                    <div className="flex justify-between">
-                      <div className="text-left text-xs truncate font-normal w-1/2">
-                        {item.last_message}
-                      </div>
-                      <div className="text-right text-xs truncate font-thin">
-                        {new Date(item?.created_at).toLocaleString('id-ID', {
-                          timeZone: 'Asia/Jakarta',
-                          hour: 'numeric',
-                          minute: 'numeric',
-                        })}
+                  return (
+                    <div
+                      className={`p-2 border-b font-bold truncate cursor-pointer ${
+                        activeRoom === item?.room_id ? 'bg-blue-300' : ''
+                      }`}
+                      onClick={() => {
+                        handleJoinRoom(item?.room_id);
+                        setActiveHidden(false);
+                      }}
+                      key={index}
+                    >
+                      {participant1 === localStorage.getItem('username')
+                        ? participant2
+                        : participant1}
+                      <div className="flex justify-between">
+                        <div className="text-left text-xs truncate font-normal w-1/2">
+                          {item.last_message}
+                        </div>
+                        <div className="text-right text-xs truncate font-thin">
+                          {new Date(item?.created_at).toLocaleString('id-ID', {
+                            timeZone: 'Asia/Jakarta',
+                            hour: 'numeric',
+                            minute: 'numeric',
+                          })}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              }) : <div className='flex justify-center items-center h-full words-break p-2'>Daftar kontak kosong, tambahkan teman dahulu lewat kotak pencarian di atas</div>}
+                  );
+                })
+              ) : (
+                <div className="flex justify-center items-center h-full words-break p-2">
+                  Daftar kontak kosong, tambahkan teman dahulu lewat kotak
+                  pencarian di atas
+                </div>
+              )}
             </div>
           </div>
           <div className="col-span-8 h-full bg-gray-100">
             <div
-              className="overflow-y-auto h-[500px] sm:h-[400px] flex flex-col overflow-wrap-break-word"
+              className="overflow-y-auto h-[545px] sm:h-[445px] flex flex-col overflow-wrap-break-word"
               ref={messagesContainerRef}
             >
               {messages?.map((item, index) => (
@@ -209,29 +216,29 @@ export function Dashboard() {
                 </div>
               ))}
             </div>
+            <div
+              className={`flex justify-center items-center ${
+                activeHidden === true ? 'hidden' : ''
+              }`}
+            >
+              <input
+                type="text"
+                className="p-3 w-9/12 truncate"
+                placeholder="Input message"
+                name="message"
+                value={inputMessage.message}
+                onChange={(e) =>
+                  setInputMessage({ ...inputMessage, message: e.target.value })
+                }
+              />
+              <button
+                className="p-3 bg-green-300 font-bold text-white w-3/12 truncate"
+                onClick={() => sendMessage()}
+              >
+                Send
+              </button>
+            </div>
           </div>
-        </div>
-        <div
-          className={`flex justify-center items-center ${
-            activeHidden === true ? 'hidden' : ''
-          }`}
-        >
-          <input
-            type="text"
-            className="p-3 w-10/12"
-            placeholder="Input message"
-            name="message"
-            value={inputMessage.message}
-            onChange={(e) =>
-              setInputMessage({ ...inputMessage, message: e.target.value })
-            }
-          />
-          <button
-            className="p-3 bg-green-300 font-bold text-white w-2/12"
-            onClick={() => sendMessage()}
-          >
-            Send
-          </button>
         </div>
       </div>
     </section>
