@@ -5,7 +5,7 @@ export function Home() {
   const [activeButton, setActiveButton] = useState(true);
   return (
     <section className="container mx-auto h-screen w-full flex items-center justify-center">
-      <div className="w-11/12 sm:6/12 md:w-4/12 lg:4/12 shadow-md p-2">
+      <div className="w-11/12 sm:6/12 md:w-4/12 lg:4/12 shadow-md p-2 bg-gray-50">
         <p className="text-2xl text-center mb-5 font-medium">
           Welcome to{' '}
           <span className="text-green-300 font-extrabold">ChitChat!</span>
