@@ -46,13 +46,13 @@ export function SearchUser() {
       <input
         type="text"
         placeholder="search username"
-        className="p-3 w-full"
+        className="p-3 w-10/12"
         name="search"
         value={inputSearch}
         onChange={(e) => setInputSearch(e.target.value)}
       />
       <button
-        className="p-3 bg-green-300 font-bold text-white"
+        className="p-3 bg-green-300 font-bold text-white w-2/12"
         onClick={() => {
           handleSearchUsername();
         }}

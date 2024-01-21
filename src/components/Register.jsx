@@ -36,7 +36,7 @@ export function Register() {
         value={userData.password}
         onChange={(e) => setUserData({ ...userData, password: e.target.value })}
       />
-      <button className="p-3 rounded-lg w-full bg-green-300 font-bold text-white" onClick={()=>handleRegister()}>
+      <button className="p-3 rounded-lg w-full bg-green-300 font-bold text-white hover:bg-green-600" onClick={()=>handleRegister()}>
         Register
       </button>
     </div>

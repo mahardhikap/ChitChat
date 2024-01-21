@@ -41,7 +41,7 @@ export function Login() {
         value={userData.password}
         onChange={(e) => setUserData({ ...userData, password: e.target.value })}
       />
-      <button className="p-3 rounded-lg w-full bg-green-300 font-bold text-white" onClick={() => handleLogin()}>
+      <button className="p-3 rounded-lg w-full bg-green-300 font-bold text-white hover:bg-green-600" onClick={() => handleLogin()}>
         Login
       </button>
     </div>

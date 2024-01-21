@@ -12,6 +12,7 @@ export function Dashboard() {
   const [sentBack, setSentBack] = useState(0);
   const [socket, setSocket] = useState(null);
   const [activeRoom, setActiveRoom] = useState('');
+  const [activeHidden, setActiveHidden] = useState(true);
   const messagesContainerRef = useRef(null);
   const navigate = useNavigate();
   const [inputMessage, setInputMessage] = useState({
@@ -113,16 +114,14 @@ export function Dashboard() {
 
   useEffect(() => {
     // Scroll to the bottom when messages change
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop =
-        messagesContainerRef.current.scrollHeight;
-    }
+    messagesContainerRef.current.scrollTop =
+      messagesContainerRef.current.scrollHeight;
   }, [messages]);
 
   useEffect(() => {
     listRooms();
   }, []);
-  
+
   useEffect(() => {
     if (roomid) {
       socket.emit('joinRoom', roomid);
@@ -144,25 +143,27 @@ export function Dashboard() {
           </span>{' '}
         </div>
         <SearchUser />
-        <div className="grid grid-cols-12 w-full bg-blue-50">
-          <div className="col-span-3 h-full">
+        <div className="grid grid-cols-12 w-full bg-gray-50">
+          <div className="col-span-4 h-full">
             <div className="overflow-y-auto h-[500px] sm:h-[400px]">
-              {rooms.map((item, index) => {
+              {rooms.length !== 0 ? rooms.map((item, index) => {
                 const participant1 = item?.participants?.[0];
                 const participant2 = item?.participants?.[1];
 
                 return (
                   <div
                     className={`p-2 mx-2 border-b font-bold truncate cursor-pointer ${
-                      activeRoom === item?.room_id ? 'bg-blue-200' : ''
+                      activeRoom === item?.room_id ? 'bg-blue-300' : ''
                     }`}
-                    onClick={() => handleJoinRoom(item?.room_id)}
+                    onClick={() => {
+                      handleJoinRoom(item?.room_id);
+                      setActiveHidden(false);
+                    }}
                     key={index}
                   >
                     {participant1 === localStorage.getItem('username')
                       ? participant2
                       : participant1}
-                    {/* <div className='text-right text-xs truncate font-normal'>{new Date(item?.created_at).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div> */}
                     <div className="flex justify-between">
                       <div className="text-left text-xs truncate font-normal w-1/2">
                         {item.last_message}
@@ -177,15 +178,15 @@ export function Dashboard() {
                     </div>
                   </div>
                 );
-              })}
+              }) : <div className='flex justify-center items-center h-full words-break p-2'>Daftar kontak kosong, tambahkan teman dahulu lewat kotak pencarian di atas</div>}
             </div>
           </div>
-          <div className="col-span-9 h-full bg-gray-100">
+          <div className="col-span-8 h-full bg-gray-100">
             <div
               className="overflow-y-auto h-[500px] sm:h-[400px] flex flex-col overflow-wrap-break-word"
               ref={messagesContainerRef}
             >
-              {messages.map((item, index) => (
+              {messages?.map((item, index) => (
                 <div
                   key={index}
                   className={`p-2 rounded-lg ${
@@ -197,22 +198,27 @@ export function Dashboard() {
                 >
                   {item?.message}
                   {/* //fix this later */}
-                  {/* <div className='text-right text-xs truncate font-thin'>
-                    {new Date(item?.created_at).toLocaleString('id-ID', {
-                      timeZone: 'Asia/Jakarta',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                    })}
-                  </div> */}
+                  <div className="text-right text-xs truncate font-thin">
+                    {item?.created_at &&
+                      new Date(item?.created_at).toLocaleString('id-ID', {
+                        timeZone: 'Asia/Jakarta',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                      })}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </div>
-        <div className="flex justify-center items-center">
+        <div
+          className={`flex justify-center items-center ${
+            activeHidden === true ? 'hidden' : ''
+          }`}
+        >
           <input
             type="text"
-            className="p-3 w-full"
+            className="p-3 w-10/12"
             placeholder="Input message"
             name="message"
             value={inputMessage.message}
@@ -221,7 +227,7 @@ export function Dashboard() {
             }
           />
           <button
-            className="p-3 bg-green-300 font-bold text-white"
+            className="p-3 bg-green-300 font-bold text-white w-2/12"
             onClick={() => sendMessage()}
           >
             Send

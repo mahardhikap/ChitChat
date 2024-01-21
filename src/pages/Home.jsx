@@ -35,6 +35,7 @@ export function Home() {
           </div>
           {activeButton === true ? <Login/> : <Register/>}
         </div>
+      <div className='text-center'><a href="https://project13.my.id" target='_blank'>&copy;2024 Mahardhika</a></div>
       </div>
     </section>
   );
