@@ -48,15 +48,17 @@ export function Dashboard() {
   const sendMessage = async () => {
     try {
       if (inputMessage.message !== '') {
-        await axios.post(
-          `${url}/send/${sentBack}`,
-          inputMessage,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
+        await axios.post(`${url}/send/${sentBack}`, inputMessage, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        // if (socket && roomid) {
+        //   // socket.emit('chat message', inputMessage, roomid);
+        //   socket.emit('chat message', inputMessage, roomid);
+        //   // getMessages();
+        // }
+        // setMessages((prevMessages) => [...prevMessages, inputMessage]);
         setInputMessage({ message: '' });
       } else {
         alert('Message harus diisi!');
@@ -89,15 +91,11 @@ export function Dashboard() {
       console.log('Socket disconnected:', reason);
     });
 
-    // newSocket.on('list myrooms', (rms) => {
-    //   setRooms((prevRooms) => [...prevRooms, rms]);
-    // });
-
     newSocket.on('chat message', (msg) => {
       setMessages((prevMessages) => [...prevMessages, msg]);
     });
 
-    // setSocket(newSocket);
+    setSocket(newSocket);
 
     return () => {
       if (newSocket) {
@@ -105,7 +103,13 @@ export function Dashboard() {
         newSocket.disconnect();
       }
     };
-  }, []);
+  }, [roomid]);
+
+  const handleJoinRoom = (roomId) => {
+    setRoomid(roomId);
+    setActiveRoom(roomId);
+    // Mengirim peristiwa 'joinRoom' ke server
+  };
 
   useEffect(() => {
     // Scroll to the bottom when messages change
@@ -118,11 +122,20 @@ export function Dashboard() {
   useEffect(() => {
     listRooms();
   }, []);
+  
+  useEffect(() => {
+    if (roomid) {
+      socket.emit('joinRoom', roomid);
+    }
+  }, [socket]);
   return (
     <section className="container mx-auto h-screen w-11/12 sm:w-8/12 flex justify-center items-center">
       <div className="flex-grow">
         <div className="my-2">
-          Login as, <span className='font-bold truncate'>{localStorage.getItem('username')}</span>{' '}
+          Login as,{' '}
+          <span className="font-bold truncate">
+            {localStorage.getItem('username')}
+          </span>{' '}
           <span
             className="font-bold cursor-pointer text-red-700 hover:text-red-500"
             onClick={() => handleLogout()}
@@ -143,10 +156,7 @@ export function Dashboard() {
                     className={`p-2 mx-2 border-b font-bold truncate cursor-pointer ${
                       activeRoom === item?.room_id ? 'bg-blue-200' : ''
                     }`}
-                    onClick={() => {
-                      setRoomid(item?.room_id);
-                      setActiveRoom(item?.room_id);
-                    }}
+                    onClick={() => handleJoinRoom(item?.room_id)}
                     key={index}
                   >
                     {participant1 === localStorage.getItem('username')

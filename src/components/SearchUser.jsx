@@ -3,6 +3,7 @@ import axios from 'axios';
 let url = import.meta.env.VITE_BASE_URL;
 export function SearchUser() {
   const [inputSearch, setInputSearch] = useState('');
+  const [refresh, setRefresh] = useState(false)
   const firstMessage = {
     message: 'Hi!',
   };
@@ -21,12 +22,7 @@ export function SearchUser() {
 
         // Reload halaman jika pemrosesan berhasil
         if (response) {
-          alert(
-            'Say hi ke teman berhasil! mungkin perlu reload untuk menampilkan.'
-          );
-          setTimeout(() => {
-            window.location.reload();
-          }, 3000);
+          setRefresh(true)
         }
       } else {
         alert('Anda tidak bisa menambahkan diri anda sendiri ke message');
@@ -38,6 +34,12 @@ export function SearchUser() {
       setInputSearch('');
     }
   };
+
+  useEffect(()=>{
+    if(refresh === true){
+      window.location.reload()
+    }
+  },[refresh])
 
   return (
     <div className="flex justify-center items-center flex-row">
