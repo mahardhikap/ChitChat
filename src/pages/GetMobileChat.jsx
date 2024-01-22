@@ -8,6 +8,7 @@ export function GetMobileChat() {
   const { id } = useParams();
   const [messages, setMessages] = useState([]);
   const [sentBack, setSentBack] = useState(0);
+  const [profile, setProfile] = useState('');
   const [socket, setSocket] = useState(null);
   const messagesContainerRef = useRef(null);
   const navigate = useNavigate();
@@ -24,6 +25,17 @@ export function GetMobileChat() {
         setMessages(result.data.data);
         // console.log(result.data.data);
         setSentBack(result.data.send_to);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getProfileRecipient = async () => {
+    await axios
+      .get(`${url}/user/${sentBack}`)
+      .then((result) => {
+        setProfile(result.data.data.username);
       })
       .catch((err) => {
         console.log(err);
@@ -98,11 +110,20 @@ export function GetMobileChat() {
       console.log('joinRoom event emitted');
     }
   }, [socket, id]);
+
+  useEffect(() => {
+    if (sentBack) {
+      getProfileRecipient();
+    }
+  }, [sentBack]);
   return (
     <section className="container mx-auto block w-11/12 sm:hidden">
       <div className="flex justify-center flex-col h-screen">
-        <div className="p-2 bg-gray-50 font-bold text-blue-400">
-          <Link to={-1}>Back</Link>
+        <div className="p-2 bg-gray-50 font-bold text-blue-400 flex justify-between items-center">
+          <div className="text-black">{profile}</div>
+          <div>
+            <Link to={-1}>back</Link>
+          </div>
         </div>
         <div
           className="overflow-y-auto h-[545px] sm:h-[445px] flex flex-col overflow-wrap-break-word"

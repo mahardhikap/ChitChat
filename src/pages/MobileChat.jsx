@@ -23,6 +23,10 @@ export function MobileChat() {
     setActiveRoom(roomId);
     navigate(`/mobile/${roomId}`);
   };
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/home');
+  };
   useEffect(() => {
     listRooms();
   }, []);
