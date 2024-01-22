@@ -126,7 +126,7 @@ export function Dashboard() {
     if (roomid) {
       socket.emit('joinRoom', roomid);
     }
-  }, [roomid]);
+  }, [socket]);
   return (
     <section className="container mx-auto h-screen w-11/12 sm:w-8/12 flex justify-center items-center">
       <div className="flex-grow">
