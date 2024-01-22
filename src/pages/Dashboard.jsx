@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
+import { MobileChat } from './MobileChat';
 
 let url = import.meta.env.VITE_BASE_URL;
 export function Dashboard() {
@@ -129,20 +130,21 @@ export function Dashboard() {
   }, [socket]);
   return (
     <section className="container mx-auto h-screen w-11/12 sm:w-8/12 flex justify-center items-center">
-      <div className="flex-grow">
+      <MobileChat />
+      <div className="flex-grow hidden sm:block">
         <div className="grid grid-cols-12 w-full bg-gray-50 shadow-md">
-        <div className="my-2 col-span-12 p-2">
-          Login as,{' '}
-          <span className="font-bold truncate">
-            {localStorage.getItem('username')}
-          </span>{' '}
-          <span
-            className="font-bold cursor-pointer text-red-700 hover:text-red-500"
-            onClick={() => handleLogout()}
-          >
-            [ logout ]
-          </span>{' '}
-        </div>
+          <div className="my-2 col-span-12 p-2">
+            Login as,{' '}
+            <span className="font-bold truncate">
+              {localStorage.getItem('username')}
+            </span>{' '}
+            <span
+              className="font-bold cursor-pointer text-red-700 hover:text-red-500"
+              onClick={() => handleLogout()}
+            >
+              [ logout ]
+            </span>{' '}
+          </div>
           <div className="col-span-4 h-full">
             <SearchUser />
             <div className="overflow-y-auto h-[545px] sm:h-[445px]">
