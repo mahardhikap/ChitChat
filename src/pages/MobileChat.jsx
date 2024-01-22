@@ -46,7 +46,7 @@ export function MobileChat() {
           </span>{' '}
         </div>
       <SearchUser />
-        <div className="overflow-y-auto w-full h-[545px] sm:h-[445px] bg-gray-50">
+        <div className="overflow-y-auto w-full h-[545px] sm:h-[445px] bg-gray-50 shadow-md">
           {rooms.length !== 0 ? (
             rooms.map((item, index) => {
               const participant1 = item?.participants?.[0];

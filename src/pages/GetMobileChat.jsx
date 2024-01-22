@@ -126,7 +126,7 @@ export function GetMobileChat() {
           </div>
         </div>
         <div
-          className="overflow-y-auto h-[545px] sm:h-[445px] flex flex-col overflow-wrap-break-word"
+          className="overflow-y-auto h-[545px] sm:h-[445px] flex flex-col overflow-wrap-break-word shadow-md"
           ref={messagesContainerRef}
         >
           {messages?.map((item, index) => (
